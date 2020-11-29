@@ -1,0 +1,2 @@
+# pygpsd
+Simulated GPS daemon
