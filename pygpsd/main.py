@@ -36,7 +36,6 @@ def get_socket(host: str, port: int) -> socket:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.settimeout(3)
-    logging.info(f'socket (host={host}, port={port})')
     sock.bind((host,port))
     sock.listen(10)
     return sock
@@ -88,10 +87,6 @@ def main(argv=sys.argv, level=logging.INFO):
         fname = os.path.join(os.path.dirname(__file__), 'data', 'example.nmea')
 
     init_logging(logfile, level)
-    logging.info(f'Address     = {host}')
-    logging.info(f'Port        = {port}')
-    logging.info(f'FileName    = {fname}')
-    logging.info(f'Logile      = {logfile}')
 
     messages = []
     with open(fname, 'r') as f:
@@ -109,7 +104,10 @@ def main(argv=sys.argv, level=logging.INFO):
     coro = loop.create_server(lambda: Server(loop, daemon, messages), sock=sock)
     server = loop.run_until_complete(coro)
 
-    logging.info('serving on {}'.format(server.sockets[0].getsockname()))
+    logging.info(f'serving on : {server.sockets[0].getsockname()}')
+    logging.info(f'nmea file  : {fname}')
+    logging.info(f'logfile    : {logfile}')
+
     try:
         loop.run_forever()
     except KeyboardInterrupt:
