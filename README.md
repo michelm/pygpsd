@@ -1,3 +1,3 @@
 # PYGPSD
 
-A simulated GPS daemon using **nmea** to mimic location, speed and heading changes
+A simulated GPS daemon using provided **nmea** file to mimic location, speed and heading changes
