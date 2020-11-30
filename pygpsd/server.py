@@ -3,12 +3,11 @@
 # Michel Mooij, michel.mooij@dynniq.com
 
 import os, sys, re, asyncio, logging, json, typing
-from typing import Dict
 import pynmea2
 
 
 class GPSDaemon:
-    def __init__(self, version: Dict, device:str='/dev/pts/1'):
+    def __init__(self, version: typing.Dict, device:str='/dev/pts/1'):
         self.ver = {
             'class':'VERSION',
             'version':version['version'],
@@ -52,7 +51,7 @@ class GPSDaemon:
             self.mode = int(msg.data[1])
 
     @property
-    def version(self) -> str:
+    def version(self) -> typing.Dict:
         return self.ver
 
     @property
@@ -68,7 +67,7 @@ class GPSDaemon:
         return f'{h}:{m}:{s}.{f}'
 
     @property
-    def tpv(self) -> Dict:
+    def tpv(self) -> typing.Dict:
         tpv = {
             'class':'TPV',
             'device': self.device,
@@ -94,7 +93,7 @@ class GPSDaemon:
 class Server(asyncio.Protocol):
     clients = {}
     
-    def __init__(self, loop, daemon, messages):
+    def __init__(self, loop, daemon: GPSDaemon, messages: typing.List):
         super(Server, self).__init__()
         self.name = None
         self.transport = None
@@ -140,5 +139,6 @@ class Server(asyncio.Protocol):
         
         :param data: received bytes
         """
-        logging.info(f'session({self.name}); received {len(data)} bytes')
-        
+        logging.info(f'session({self.name}) received({data})')
+        s = json.dumps(self.daemon.version)
+        self.send(s.encode('utf-8'))
